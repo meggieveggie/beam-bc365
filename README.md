@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/pypi/v/beam-nuggets.svg)](https://pypi.org/project/beam-nuggets/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/beam-nuggets.svg)](https://pypi.org/project/beam-nuggets/)
+[![PyPI](https://img.shields.io/pypi/v/beam-bc365.svg)](https://pypi.org/project/beam-bc365/) [![PyPI - Downloads](https://img.shields.io/pypi/dm/beam-bc365.svg)](https://pypi.org/project/beam-bc365/)
 
 # About
 
