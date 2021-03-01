@@ -33,7 +33,7 @@ class BCServiceAPITest(unittest.TestCase):
     def test_service_configuration_auth_username(self):
         expected_username = "foo"
         assert_equal(
-            self.service_config.auth.usernamme,
+            self.service_config.auth.username,
             expected_username,
             'expected: {}, got: {}'.format(
                 expected_username,

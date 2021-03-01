@@ -19,3 +19,35 @@ git clone git@github.com:Spazzy757/beam-bc365.git
 cd beam-bc365
 pip install .
 ```
+
+# Local Development
+
+## Install development dependencies
+
+```bash
+pip install -e .[dev]
+```
+
+## Run tests
+
+```bash
+nosetests
+```
+
+## Linting
+
+please make sure to lint your code before contributing
+
+```bash
+pylint .
+```
+
+## Bumpversion
+
+**NOTE:** This should be done by CI/CD, this is only for exceptional cases
+
+This library uses semantic versioning
+
+```bash
+bump2version --new-version $NEW_VERSION setup.py
+```

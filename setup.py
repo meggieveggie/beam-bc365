@@ -9,7 +9,8 @@ REQUIRED_PACKAGES = [
 ]
 
 REQUIRED_PACKAGES_TEST = [
-    'nose>=1.3.7,<2.0.0'
+    'nose>=1.3.7,<2.0.0',
+    'pylint'
 ]
 
 REQUIRED_PACKAGES_DOCS = [
