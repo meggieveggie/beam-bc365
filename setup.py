@@ -13,7 +13,9 @@ REQUIRED_PACKAGES_TEST = [
     'nose>=1.3.7,<2.0.0'
 ]
 
-REQUIRED_PACKAGES_DOCS = []
+REQUIRED_PACKAGES_DOCS = [
+ "bump2version"
+]
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
