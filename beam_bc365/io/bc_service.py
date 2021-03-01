@@ -30,7 +30,7 @@ class ReadFromService(PTransform):
                 service='G_L_ENTRY',
                 instance='Sandbox',
                 instance_id="2E0B815D-A1AC-491B-BD09-0876DACC2A12"
-            ) 
+            )
             with beam.Pipeline(options=PipelineOptions()) as p:
                 records = p | "Reading records from service" >>  bc_service.ReadFromService(
                     service_config=service_config,
