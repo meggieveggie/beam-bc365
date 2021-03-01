@@ -2,7 +2,6 @@ from __future__ import division, print_function
 
 from setuptools import setup, find_packages
 
-VERSION = '0.0.2'
 
 REQUIRED_PACKAGES = [
     'apache-beam>=2.8.0,<3.0.0',
@@ -22,7 +21,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='beam-bc365',
-    version=VERSION,
+    version='0.0.3',
     author='Brendan Kamp',
     author_email='brendankamp757@gmail.com',
     description='Microsoft Business Central transofrm for the Apache beam python SDK.',
