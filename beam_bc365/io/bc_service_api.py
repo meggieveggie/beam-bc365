@@ -50,13 +50,14 @@ class ServiceConfiguration(object):
             })
         return url_data
 
+
 class BusinessCentralSource(object):
 
     def __init__(self, service_config):
         self._service_config = service_config
 
     def read_data(self):
-        for endpoint_data in self._service_config.urls_data:
+        for endpoint_data in self._service_config.url_data:
             for record in self.service_data(endpoint_data):
                 yield record
     
@@ -74,5 +75,6 @@ class BusinessCentralSource(object):
             headers=headers
         )
         for record in res.json().get('value'):
+            # Company gets added to records for instances that collect multiple companies
             record['Company'] =  endpoint_data.get('company')
             yield record
