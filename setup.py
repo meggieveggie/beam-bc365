@@ -14,7 +14,7 @@ REQUIRED_PACKAGES_TEST = [
 ]
 
 REQUIRED_PACKAGES_CI_CD = [
-    "bump2version"
+    "bump2version",
     "twine"
 ]
 
