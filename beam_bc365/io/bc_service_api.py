@@ -1,8 +1,10 @@
 from __future__ import division, print_function
 
 import urllib
+import requests
 
 from requests.auth import HTTPBasicAuth
+
 
 class ServiceConfiguration(object):
     """Holds parameters for accessing a Microsfot Business Central 365.
@@ -29,7 +31,7 @@ class ServiceConfiguration(object):
         instance_id,
         base_url="https://api.businesscentral.dynamics.com/v2.0"
     ):
-        self.urls = self._get_urls(
+        self.url_data = self._get_urls(
             service=service,
             companies=companies,
             instance=instance,
@@ -40,9 +42,39 @@ class ServiceConfiguration(object):
 
     @staticmethod
     def _get_urls(service,companies,instance,instance_id,base_url):
-        urls = []
+        url_data = []
         for company in companies:
-            urls.append(
-               f"{base_url}/{instance_id}/{instance}/Company('{urllib.parse.quote(company)}')/{service}"
-            )
-        return urls
+            url_data.append({
+               'endpoint': f"{base_url}/{instance_id}/{instance}/ODataV4/Company('{urllib.parse.quote(company)}')/{service}",
+               'company': company
+            })
+        return url_data
+
+
+class BusinessCentralSource(object):
+
+    def __init__(self, service_config):
+        self._service_config = service_config
+
+    def read_data(self):
+        for endpoint_data in self._service_config.url_data:
+            for record in self.service_data(endpoint_data):
+                yield record
+    
+    def service_data(self, endpoint_data):
+        headers = {
+            "OData-MaxVersion": "4.0",
+            "OData-Version": "4.0",
+            "Accept": "application/json",
+            "Content-Type": "application/json; charset=utf-8",
+            "Prefer": "odata.include-annotations=OData.Community.Display.V1.FormattedValue"
+        }
+        res = requests.get(
+            endpoint_data.get('endpoint'),
+            auth=self._service_config.auth,
+            headers=headers
+        )
+        for record in res.json().get('value'):
+            # Company gets added to records for instances that collect multiple companies
+            record['Company'] =  endpoint_data.get('company')
+            yield record

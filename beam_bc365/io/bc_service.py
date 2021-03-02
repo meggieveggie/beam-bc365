@@ -1,4 +1,4 @@
-""":class:`~apache_beam.transforms.ptransform.PTransform` s for reading from
+""":class:`~apache_beam.transforms.ptransform.PTransform` is for reading from
 and writing to relational databases. SQLAlchemy_ is used for interfacing the
 databases.
 .. _SQLAlchemy: https://www.sqlalchemy.org/
@@ -8,6 +8,7 @@ from __future__ import division, print_function
 
 from apache_beam import PTransform, Create, ParDo, DoFn
 
+from beam_bc365.io.bc_service_api import BusinessCentralSource
 
 class ReadFromService(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading
@@ -56,18 +57,11 @@ class ReadFromService(PTransform):
 
 class _ReadFromWebService(DoFn):
     def process(self, element):
-        """
-        # TODO: pull data from BC365
+        bc_args = dict(element)
+        source = BusinessCentralSource(**bc_args)
         try:
-            if query:
-                for record in db.query(table_name, query):
-                    yield record
-            else:
-                for record in db.read(table_name):
-                    yield record
+            for record in source.read_data():
+                yield record
         except:
             raise
-        finally:
-            db.close_session()
-        """
-        pass
+
