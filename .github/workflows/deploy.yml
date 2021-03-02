@@ -1,0 +1,27 @@
+name: deploy
+on:
+  release:
+    types: ["created"]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+          architecture: "x64"
+      - run: pip install -e .[dev]
+        name: install development dependencies
+      - run: bump2version --new-version ${{github.ref}} setup.py
+        name: bump version
+      - name: push commit
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: "master"
+      - name: build dist
+        run: python setup.py sdist
+      - name: push to PyPi
+        run: twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} dist/*

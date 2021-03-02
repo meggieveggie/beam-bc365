@@ -6,7 +6,7 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 
-class ServiceConfiguration(object):
+class ServiceConfiguration():
     """Holds parameters for accessing a Microsfot Business Central 365.
     User to pass database access parameters to
     :class:`~beam_nuggets.io.relational_db_api.SqlAlchemyDB`.
