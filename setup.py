@@ -13,8 +13,9 @@ REQUIRED_PACKAGES_TEST = [
     'pylint'
 ]
 
-REQUIRED_PACKAGES_DOCS = [
- "bump2version"
+REQUIRED_PACKAGES_CI_CD = [
+    "bump2version"
+    "twine"
 ]
 
 with open("README.md", "r") as fh:
@@ -30,7 +31,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/Spazzy757/beam-bc365",
     install_requires=REQUIRED_PACKAGES,
-    extras_require={'dev': REQUIRED_PACKAGES_TEST + REQUIRED_PACKAGES_DOCS},
+    extras_require={'dev': REQUIRED_PACKAGES_TEST + REQUIRED_PACKAGES_CI_CD},
     packages=find_packages(exclude=("test", "tests")),
     classifiers=[
         "Programming Language :: Python",
