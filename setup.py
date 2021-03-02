@@ -10,7 +10,8 @@ REQUIRED_PACKAGES = [
 
 REQUIRED_PACKAGES_TEST = [
     'nose>=1.3.7,<2.0.0',
-    'pylint'
+    'pylint',
+    'responses'
 ]
 
 REQUIRED_PACKAGES_CI_CD = [
@@ -23,7 +24,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='beam-bc365',
-    version='0.0.3',
+    version='0.0.4',
     author='Brendan Kamp',
     author_email='brendankamp757@gmail.com',
     description='Microsoft Business Central transofrm for the Apache beam python SDK.',
