@@ -8,7 +8,15 @@ from __future__ import division, print_function
 
 from apache_beam import PTransform, Create, ParDo, DoFn
 
-from beam_bc365.io.bc_service_api import BusinessCentralSource
+from beam_bc365.io.bc_service_api import (
+    ServiceConfiguration,
+    BusinessCentralSource
+)
+
+# It is intended ServiceConfiguration is imported
+# from this module by the library users. Below is to make sure they've been
+# imported to this module.
+assert ServiceConfiguration is not None
 
 class ReadFromService(PTransform):
     """A :class:`~apache_beam.transforms.ptransform.PTransform` for reading
@@ -17,10 +25,8 @@ class ReadFromService(PTransform):
     ``dict:s``, each corresponding to a row in the target database table.
     Args:
         source_config (SourceConfiguration): specifies the target database.
-        table_name (str): the name of the table to be read.
-        query (str): the SQL query to run against the table.
     Examples:
-        Reading from a table on a postgres database. ::
+        Reading from a web service on Microsoft Central Business Central  ::
             import apache_beam as beam
             from apache_beam.options.pipeline_options import PipelineOptions
             from beam_bc365.io import bc_service
