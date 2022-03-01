@@ -60,7 +60,7 @@ class BusinessCentralSource(object):
         for endpoint_data in self._service_config.url_data:
             for record in self.service_data(endpoint_data):
                 yield record
-    
+
     def service_data(self, endpoint_data):
         headers = {
             "OData-MaxVersion": "4.0",
@@ -69,12 +69,20 @@ class BusinessCentralSource(object):
             "Content-Type": "application/json; charset=utf-8",
             "Prefer": "odata.include-annotations=OData.Community.Display.V1.FormattedValue"
         }
-        res = requests.get(
-            endpoint_data.get('endpoint'),
-            auth=self._service_config.auth,
-            headers=headers
-        )
-        for record in res.json().get('value'):
-            # Company gets added to records for instances that collect multiple companies
-            record['Company'] =  endpoint_data.get('company')
-            yield record
+        url = endpoint_data.get('endpoint')
+        has_next = True
+        while has_next:
+            res = requests.get(
+                url,
+                auth=self._service_config.auth,
+                headers=headers
+            )
+            if res.json().get("@odata.nextLink"):
+                # Set the pagination link
+                url = res.json().get("@odata.nextLink")
+            else:
+                has_next = False
+            for record in res.json().get('value'):
+                # Company gets added to records for instances that collect multiple companies
+                record['Company'] =  endpoint_data.get('company')
+                yield record
