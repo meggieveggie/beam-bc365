@@ -56,14 +56,23 @@ class TestReadFromService(unittest.TestCase):
             json=MOCK_BC365,
             status=200
         )
+        responses.add(
+            responses.POST,
+            "https://example.com/123456/oauth2/v2.0/token",
+            json={
+                'access_token': 't'
+            },
+            status=200
+        )
         service_config = ServiceConfiguration(
             service="TimeSheetData",
             companies=['Cronos'],
             instance='Sandbox',
-            username='foo',
-            service_key='api_key',
-            instance_id='123456',
-            base_url="https://example.com"
+            tenant_id='123456',
+            base_url="https://example.com",
+            auth_url="https://example.com",
+            client_id="123456",
+            client_secret="secret"
         )
         def _check_input(record):
             assert_equal(

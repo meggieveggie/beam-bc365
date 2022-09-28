@@ -15,10 +15,11 @@ class BCServiceConfigTest(unittest.TestCase):
         service="testservice",
         companies=['Cronos'],
         instance='Sandbox',
-        username='foo',
-        service_key='api_key',
-        instance_id='123456789',
-        base_url="example.com"
+        tenant_id='123456789',
+        base_url="example.com",
+        auth_url="example.com",
+        client_id="123456",
+        client_secret="secret"
     )
 
     def test_service_configuration_urls(self):
@@ -32,25 +33,47 @@ class BCServiceConfigTest(unittest.TestCase):
                 )
         )
 
-    def test_service_configuration_auth_username(self):
-        expected_username = "foo"
+    def test_service_configuration_auth_url(self):
+        expected_auth_url = "example.com"
         assert_equal(
-            self.service_config.auth.username,
-            expected_username,
+            self.service_config.auth_url,
+            expected_auth_url,
             'expected: {}, got: {}'.format(
-                expected_username,
-                self.service_config.auth.username
+                expected_auth_url,
+                self.service_config.auth_url
                 )
         )
 
-    def test_service_configuration_auth_password(self):
-        expected_password = "api_key"
+    def test_service_configuration_tenant_id(self):
+        expected_tenant_id = "123456789"
         assert_equal(
-            self.service_config.auth.password,
-            expected_password,
+            self.service_config.tenant_id,
+            expected_tenant_id,
             'expected: {}, got: {}'.format(
-                expected_password,
-                self.service_config.auth.password
+                expected_tenant_id,
+                self.service_config.tenant_id
+                )
+        )
+
+    def test_service_configuration_client_id(self):
+        expected_client_id = "123456"
+        assert_equal(
+            self.service_config.client_id,
+            expected_client_id,
+            'expected: {}, got: {}'.format(
+                expected_client_id,
+                self.service_config.client_id
+                )
+        )
+    
+    def test_service_configuration_client_secret(self):
+        expected_client_secret = "secret"
+        assert_equal(
+            self.service_config.client_secret,
+            expected_client_secret,
+            'expected: {}, got: {}'.format(
+                expected_client_secret,
+                self.service_config.client_secret
                 )
         )
 
@@ -95,10 +118,11 @@ class BCSourceTest(unittest.TestCase):
         service="TimeSheetData",
         companies=['Cronos'],
         instance='Sandbox',
-        username='foo',
-        service_key='api_key',
-        instance_id='123456',
-        base_url="https://example.com"
+        tenant_id='123456',
+        base_url="https://example.com",
+        auth_url="https://auth.com",
+        client_id="123456",
+        client_secret="secret"
     ))
 
     @responses.activate
@@ -107,6 +131,14 @@ class BCSourceTest(unittest.TestCase):
             responses.GET,
             "https://example.com/123456/Sandbox/ODataV4/Company('Cronos')/TimeSheetData",
             json=MOCK_BC365,
+            status=200
+        )
+        responses.add(
+            responses.POST,
+            "https://auth.com/123456/oauth2/v2.0/token",
+            json={
+                'access_token': 't'
+            },
             status=200
         )
         for record in self.bc_source.read_data():

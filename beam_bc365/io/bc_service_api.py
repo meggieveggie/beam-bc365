@@ -13,39 +13,46 @@ class ServiceConfiguration():
     ``SourceConfiguration.url`` provides the database url used by SqlAlchemy to
     connect to the database.
     Args:
-        username (str): Username for Business Central 365.
-        service_key (str): API Key for Business Central 365.
         companies (list): List of Companies to call endpoints for.
         service (str): The service to call.
         instance (str): The Business Central 365 Instance.
-        instance_id (str): The Ownership instance if
-            found in the Business Central 365 URL.
+        tenant_id (str): The tenant id of your Azure Active Directory.
+        client_id (str): The client id of your AAD OAuth App.
+        client_secret(str): The client secret of your AAD OAuth App.
     """
     def __init__(
         self,
-        username,
-        service_key,
+        client_id,
+        client_secret,
+        tenant_id,
         companies,
         service,
         instance,
-        instance_id,
-        base_url="https://api.businesscentral.dynamics.com/v2.0"
+        base_url="https://api.businesscentral.dynamics.com/v2.0",
+        auth_url="https://login.microsoftonline.com",
+        scope="https://api.businesscentral.dynamics.com/.default"
     ):
         self.url_data = self._get_urls(
             service=service,
             companies=companies,
             instance=instance,
-            instance_id=instance_id,
+            tenant_id=tenant_id,
             base_url=base_url
         )
-        self.auth = HTTPBasicAuth(username, service_key)
+        self.auth_url =  auth_url
+        self.tenant_id = tenant_id
+        self.client_id = client_id
+        self.client_secret = client_secret
+        self.scope = scope
+
+        
 
     @staticmethod
-    def _get_urls(service,companies,instance,instance_id,base_url):
+    def _get_urls(service,companies,instance,tenant_id,base_url):
         url_data = []
         for company in companies:
             url_data.append({
-               'endpoint': f"{base_url}/{instance_id}/{instance}/ODataV4/Company('{urllib.parse.quote(company)}')/{service}",
+               'endpoint': f"{base_url}/{tenant_id}/{instance}/ODataV4/Company('{urllib.parse.quote(company)}')/{service}",
                'company': company
             })
         return url_data
@@ -62,19 +69,33 @@ class BusinessCentralSource(object):
                 yield record
 
     def service_data(self, endpoint_data):
+        token = ""
+        res = requests.post(
+            url=f"{self._service_config.auth_url}/{self._service_config.tenant_id}/oauth2/v2.0/token",
+            data={
+                'grant_type': 'client_credentials',
+                'client_id': self._service_config.client_id,
+                'client_secret': self._service_config.client_secret,
+                'scope': self._service_config.scope
+            }
+        )
+        if res.status_code == 200:
+            token = res.json().get("access_token")
+        else:
+            raise Exception("Failed to get authentication token")
         headers = {
             "OData-MaxVersion": "4.0",
             "OData-Version": "4.0",
             "Accept": "application/json",
             "Content-Type": "application/json; charset=utf-8",
-            "Prefer": "odata.include-annotations=OData.Community.Display.V1.FormattedValue"
+            "Prefer": "odata.include-annotations=OData.Community.Display.V1.FormattedValue",
+            "Authorization": f"Bearer {token}"
         }
         url = endpoint_data.get('endpoint')
         has_next = True
         while has_next:
             res = requests.get(
                 url,
-                auth=self._service_config.auth,
                 headers=headers
             )
             if res.json().get("@odata.nextLink"):
