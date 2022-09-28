@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name='beam-bc365',
-    version='0.3.0',
+    version='0.4.0',
     author='Brendan Kamp',
     author_email='brendankamp757@gmail.com',
     description='Microsoft Business Central transofrm for the Apache beam python SDK.',
